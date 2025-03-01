@@ -17,6 +17,7 @@ use rand::Rng;
 use std::io::{stdout, Write};
 use std::time::{Duration, Instant};
 use std::collections::VecDeque;
+use std::io;
 
 // Game constants
 const WIDTH: u16 = 30;
@@ -103,11 +104,11 @@ impl Game {
 }
 
 fn generate_food(snake: &VecDeque<(u16, u16)>) -> (u16, u16) {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let mut food;
 
     loop {
-        food = (rng.gen_range(0..WIDTH), rng.gen_range(0..HEIGHT));
+        food = (rng.random_range(0..WIDTH), rng.random_range(0..HEIGHT));
         if !snake.contains(&food) {
             break;
         }
@@ -116,7 +117,7 @@ fn generate_food(snake: &VecDeque<(u16, u16)>) -> (u16, u16) {
     food
 }
 
-fn render(game: &Game) -> crossterm::Result<()> {
+fn render(game: &Game) -> io::Result<()> {
     let mut stdout = stdout();
 
     queue!(
@@ -179,7 +180,7 @@ fn render(game: &Game) -> crossterm::Result<()> {
     Ok(())
 }
 
-fn main() -> crossterm::Result<()> {
+fn main() -> io::Result<()> {
     // Set up terminal
     terminal::enable_raw_mode()?;
     execute!(
