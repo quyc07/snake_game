@@ -18,7 +18,7 @@
 
 ### 下载并安装
 
-到[此处](https://github.com/quyc07/examination/releases)下载对应平台的安装包,解压并运行.
+到[此处](https://github.com/quyc07/snake_game/releases)下载对应平台的安装包,解压并运行.
 
 ### cargo 安装
 
