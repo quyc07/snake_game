@@ -8,16 +8,17 @@
 // rand = "0.8"
 
 use crossterm::{
-    cursor, execute, queue,
+    cursor,
+    event::{self, Event, KeyCode},
+    execute, queue,
     style::{self, Color, SetBackgroundColor},
     terminal::{self, ClearType},
-    event::{self, Event, KeyCode},
 };
 use rand::Rng;
-use std::io::{stdout, Write};
-use std::time::{Duration, Instant};
 use std::collections::VecDeque;
 use std::io;
+use std::io::{stdout, Write};
+use std::time::{Duration, Instant};
 
 // Game constants
 const WIDTH: u16 = 30;
@@ -97,7 +98,7 @@ impl Game {
             (Direction::Up, Direction::Down)
             | (Direction::Down, Direction::Up)
             | (Direction::Left, Direction::Right)
-            | (Direction::Right, Direction::Left) => return,
+            | (Direction::Right, Direction::Left) => (),
             _ => self.direction = direction,
         }
     }
@@ -128,9 +129,9 @@ fn render(game: &Game) -> io::Result<()> {
     )?;
 
     // Draw border
-    for y in 0..HEIGHT+2 {
-        for x in 0..WIDTH+2 {
-            if y == 0 || y == HEIGHT+1 || x == 0 || x == WIDTH+1 {
+    for y in 0..HEIGHT + 2 {
+        for x in 0..WIDTH + 2 {
+            if y == 0 || y == HEIGHT + 1 || x == 0 || x == WIDTH + 1 {
                 queue!(
                     stdout,
                     cursor::MoveTo(x, y),
@@ -145,7 +146,7 @@ fn render(game: &Game) -> io::Result<()> {
     for &(x, y) in &game.snake {
         queue!(
             stdout,
-            cursor::MoveTo(x+1, y+1),
+            cursor::MoveTo(x + 1, y + 1),
             SetBackgroundColor(Color::Green),
             style::Print(" ")
         )?;
@@ -154,7 +155,7 @@ fn render(game: &Game) -> io::Result<()> {
     // Draw food
     queue!(
         stdout,
-        cursor::MoveTo(game.food.0+1, game.food.1+1),
+        cursor::MoveTo(game.food.0 + 1, game.food.1 + 1),
         SetBackgroundColor(Color::Red),
         style::Print(" ")
     )?;
@@ -162,7 +163,7 @@ fn render(game: &Game) -> io::Result<()> {
     // Draw score
     queue!(
         stdout,
-        cursor::MoveTo(0, HEIGHT+3),
+        cursor::MoveTo(0, HEIGHT + 3),
         SetBackgroundColor(Color::Black),
         style::Print(format!("Score: {}", game.score))
     )?;
@@ -170,7 +171,7 @@ fn render(game: &Game) -> io::Result<()> {
     if game.game_over {
         queue!(
             stdout,
-            cursor::MoveTo(WIDTH/2 - 4, HEIGHT/2),
+            cursor::MoveTo(WIDTH / 2 - 4, HEIGHT / 2),
             SetBackgroundColor(Color::Black),
             style::Print("GAME OVER")
         )?;
@@ -183,11 +184,7 @@ fn render(game: &Game) -> io::Result<()> {
 fn main() -> io::Result<()> {
     // Set up terminal
     terminal::enable_raw_mode()?;
-    execute!(
-        stdout(),
-        terminal::EnterAlternateScreen,
-        cursor::Hide
-    )?;
+    execute!(stdout(), terminal::EnterAlternateScreen, cursor::Hide)?;
 
     let mut game = Game::new();
     let mut last_update = Instant::now();
@@ -225,11 +222,7 @@ fn main() -> io::Result<()> {
     }
 
     // Clean up terminal
-    execute!(
-        stdout(),
-        terminal::LeaveAlternateScreen,
-        cursor::Show
-    )?;
+    execute!(stdout(), terminal::LeaveAlternateScreen, cursor::Show)?;
     terminal::disable_raw_mode()?;
 
     Ok(())
