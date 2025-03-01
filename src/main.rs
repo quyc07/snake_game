@@ -1,6 +1,6 @@
 // First, create a new project with:
-// cargo new snake_game
-// cd snake_game
+// cargo new snake_game_cli
+// cd snake_game_cli
 
 // In Cargo.toml, add dependencies:
 // [dependencies]
