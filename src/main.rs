@@ -15,9 +15,10 @@ use crossterm::{
     terminal::{self, ClearType},
 };
 use rand::Rng;
+use std::cmp::max;
 use std::collections::VecDeque;
 use std::io;
-use std::io::{Write, stdout};
+use std::io::{stdout, Write};
 use std::time::{Duration, Instant};
 
 // Game constants
@@ -188,10 +189,9 @@ fn main() -> io::Result<()> {
 
     let mut game = Game::new();
     let mut last_update = Instant::now();
-
     loop {
         // Handle input
-        if event::poll(Duration::from_millis(100))? {
+        if event::poll(Duration::from_millis(50))? {
             if let Event::Key(key_event) = event::read()? {
                 match key_event.code {
                     KeyCode::Char('q') => break,
@@ -204,9 +204,12 @@ fn main() -> io::Result<()> {
             }
         }
 
+        // 得分越多，速度越快，上限是50ms
+        let speed_interval = Duration::from_millis(max(150 - game.score * 5, 50) as u64);
+
         // Update game state at a fixed interval
         let now = Instant::now();
-        if now - last_update >= Duration::from_millis(150) {
+        if now - last_update >= speed_interval {
             game.update();
             last_update = now;
         }
