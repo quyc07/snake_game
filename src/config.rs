@@ -6,7 +6,7 @@ use std::fs;
 use std::io::{Error, ErrorKind};
 use std::path::PathBuf;
 
-const DATA_PATH: &'static str = ".data/data.json";
+const DATA_PATH: &str = ".data/data.json";
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DataConfig {
