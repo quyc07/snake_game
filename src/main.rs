@@ -7,6 +7,9 @@
 // crossterm = "0.25"
 // rand = "0.8"
 
+mod config;
+
+use crate::config::DataConfig;
 use crossterm::{
     cursor,
     event::{self, Event, KeyCode},
@@ -40,6 +43,7 @@ struct Game {
     direction: Direction,
     score: u32,
     game_over: bool,
+    data_config: DataConfig,
 }
 
 impl Game {
@@ -57,6 +61,7 @@ impl Game {
             direction: Direction::Right,
             score: 0,
             game_over: false,
+            data_config: DataConfig::new().unwrap(),
         }
     }
 
@@ -77,6 +82,7 @@ impl Game {
         // Check for collisions
         if new_head.0 >= WIDTH || new_head.1 >= HEIGHT || self.snake.contains(&new_head) {
             self.game_over = true;
+            self.data_config.write_score(self.score);
             return;
         }
 
@@ -168,6 +174,29 @@ fn render(game: &Game) -> io::Result<()> {
         SetBackgroundColor(Color::Black),
         style::Print(format!("Score: {}", game.score))
     )?;
+
+    // Draw score history
+    queue!(
+        stdout,
+        cursor::MoveTo(0, HEIGHT + 4),
+        SetBackgroundColor(Color::Black),
+        style::Print("历史得分: ")
+    )?;
+    game.data_config
+        .scores
+        .iter()
+        .enumerate()
+        .for_each(|(i, &score)| {
+            match queue!(
+                stdout,
+                cursor::MoveTo(0, HEIGHT + 5 + i as u16),
+                SetBackgroundColor(Color::Black),
+                style::Print(format!("第{}名: {}", i + 1, &score))
+            ) {
+                Ok(_) => (),
+                Err(e) => panic!("fail to show score history, {}", e),
+            };
+        });
 
     if game.game_over {
         queue!(
