@@ -1,7 +1,7 @@
 [package]
 name = "snake_game_cli"
 version = "0.1.3"
-edition = "2024"
+edition = "2021"
 description = "snake game build in rust with crossterm"
 authors = ["quyc <quycsff@gmail.com>"]
 repository = "https://github.com/quyc07/snake_game"
