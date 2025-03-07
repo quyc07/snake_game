@@ -21,7 +21,7 @@ use rand::Rng;
 use std::cmp::max;
 use std::collections::VecDeque;
 use std::io;
-use std::io::{Write, stdout};
+use std::io::{stdout, Write};
 use std::time::{Duration, Instant};
 
 // Game constants

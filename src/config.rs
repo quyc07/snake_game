@@ -46,3 +46,17 @@ impl DataConfig {
         Ok(data_config)
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_write_score() {
+        let mut data_config = DataConfig { scores: vec![] };
+        data_config.write_score(100);
+        assert_ne!(data_config.scores, vec![100]);
+        assert_eq!(DataConfig::new().unwrap().scores, vec![100]);
+    }
+}
